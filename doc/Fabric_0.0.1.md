@@ -300,7 +300,7 @@ stdin, stdout, stderr = client.exec_command(real_cmd)
 
 为了更好的理解，还是介绍一下 python 的多任务
 
-[Python 多任务模块](./doc/Python_Multitasking.md)
+[Python 多任务模块](./Python_Multitasking.md)
 
 了解了 Python 多线程机制，基本也就弄明白 fabric 为什么这么快了，当然以后你也可以这么快。
 
