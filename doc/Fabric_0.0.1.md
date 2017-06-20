@@ -221,3 +221,90 @@ def _connect():
         exit(1)
 ```
 
+_connect() 函数会读取 ENV['fab_hosts'] 中的主机名，通过 [paramiko（一个很好用的 SSH 库）](https://github.com/paramiko/paramiko)
+创建 SSH 连接，并添加到 CONNECTIONS 列表中。
+
+接下来便是将 cmd 传入到远程主机上执行，_on_host_do(_run, cmd)，fabric.py 388 行
+
+```python
+# fabric.py
+
+def _on_host_do(fn, *args):
+    '''Invoke the given function with hostname and client parameters in
+    accord with the current fac_mode strategy.
+    
+    fn should be of type:
+        (str:hostname, paramiko. SSHClient:client) -> bool:success
+        
+    '''
+    
+    strategy = ENV['fab_mode']
+    if strategy == 'fanout':
+        threads = []
+        for host, client in CONNECTIONS:
+            env = dict(ENV)
+            env['fab_host'] = host 
+            thread = threading.Thread(None, lambda: fn(host, client, env, *args))
+            thread.setDaemon(True)
+            thread.start()
+            threads.append(thread)
+        for thread in threads:
+            thread.join()
+    elif strategy == 'rolling':
+        for host, client in CONNECTIONS:
+            env = dict(ENV)
+            env['fab_host'] = host
+            fn(host, client, env, *args)
+    else:
+        print("Unsupported fab_mode: %s" % strategy)
+        print("Supported modes are: fanout, rolling")
+        exit(1)   
+```
+
+这里 fabric 使用了两种模式去执行 cmd，fanout 和 rolling 即使用 threading 模块多进程并行执行，或者串行一个一个地去执行。
+
+_on_host_fo(fn, *args) 的第一个参数传入的是函数，这样写出来的代码看起来就很舒服，不像我平时写的那些 "东北乱炖" 大杂烩。
+
+通过前面这些函数，已经完成了获取主机名、用户密码、需要执行的命令，创建 SSH 连接，接下来就是具体执行命令了，_run() 427 行
+
+```python
+# fabric.py
+
+def _run(host, client, env, cmd):
+    cmd = _lazy_format(cmd, env)
+    real_cmd = env['fab_shell'] % cmd.replace('"', '\\"')
+    print("[%s] run: %s" % (host, (env['fab_debug'] and real_cmd or cmd)))
+    stdin, stdout, stderr = client.exec_command(real_cmd)
+    out_th = _start_outputter("[%s] out" % host, stdout)
+    err_th = _start_outputter("[%s] out" % host, stderr)
+    out_th.join()
+    err_th.join()
+    
+def _start_outputter(prefix, channel):
+    def outputter():
+        line = channel.readline()
+        while line:
+            print("%s: %s" % (prefix, line))
+            line = channel.readline()
+    thread = threading.Thread(None, outputter, prefix)
+    thread.setDaemon(True)
+    thread.start()
+    return thread
+```
+
+事实上真正去远程服务器上执行命令的是这一段：
+
+```python
+stdin, stdout, stderr = client.exec_command(real_cmd)
+```
+
+为了更好的理解，还是介绍一下 python 的多任务
+
+[Python 多任务模块](./doc/Python_Multitasking.md)
+
+了解了 Python 多线程机制，基本也就弄明白 fabric 为什么这么快了，当然以后你也可以这么快。
+
+## Step four
+
+
+
