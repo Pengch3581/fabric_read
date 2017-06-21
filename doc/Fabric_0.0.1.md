@@ -306,5 +306,22 @@ stdin, stdout, stderr = client.exec_command(real_cmd)
 
 ## Step four
 
+Date: Sun Jan 13 22:33:30 2008
 
+经过 10 天的增删改，fabric 的第一版本终于问世了，现在已经包含了许多功能。
 
+```python
+# fabric.py
+
+def main(args):
+    try:
+        print(__greeter__ % ENV)
+        _load_std_commands()
+        fabfile = _pick_fabfile()
+        load(fabfile)
+        _validate_commands(args)
+        _execute_commands(args)
+    finally:
+        _disconnect()
+        print("Done.")
+```
