@@ -310,18 +310,10 @@ Date: Sun Jan 13 22:33:30 2008
 
 经过 10 天的增删改，fabric 的第一版本终于问世了，现在已经包含了许多功能。
 
-```python
-# fabric.py
+工欲善其事必先利其器，有了 git 这个强大的时光穿梭机，我们就可以轻松地看到开发者在之前开发的版本，
+光看不容易理解，为了方便调试，下面推荐第二个利器 [pyenv](https://github.com/pyenv/pyenv)，
+在 python 多版本之前切换如丝滑般流畅，妈妈再也不用担心装 python 了...
 
-def main(args):
-    try:
-        print(__greeter__ % ENV)
-        _load_std_commands()
-        fabfile = _pick_fabfile()
-        load(fabfile)
-        _validate_commands(args)
-        _execute_commands(args)
-    finally:
-        _disconnect()
-        print("Done.")
-```
+OK，下面我们开始调试 fabric 第一版本
+
+
