@@ -316,4 +316,25 @@ Date: Sun Jan 13 22:33:30 2008
 
 OK，下面我们开始调试 fabric 第一版本
 
+```bash
+➜  fabric git:(master) ✗ ./fab
+   Fabric v. 0.0.1, Copyright (C) 2008 Christian Vest Hansen.
+   Fabric comes with ABSOLUTELY NO WARRANTY; for details type `fab warranty'.
+   This is free software, and you are welcome to redistribute it
+   under certain conditions; type `fab license' for details.
 
+No commands given.
+Available commands are:
+   clean       : Recurse the directory tree and remove all files matched by .gitignore.
+   help        : Display usage help message to the console, or help for a given command.
+   license     : Display the Fabric distribution license text.
+   list        : Display a list of commands with descriptions.
+   ready_files
+   release     : Create a new release of Fabric, and upload it to our various services.
+   set         : Set a Fabric variable.
+   shell       : Start an interactive shell connection to the specified hosts.
+   warranty    : Display warranty information for the Fabric software.
+Done.
+```
+在第一版中，set 函数并没有修改环境变量，但是大体的雏形已经出现，通过封装好的几个命令，就可以轻松的完成远程操作，
+十分方便跟直观。
