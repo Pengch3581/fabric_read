@@ -5,6 +5,8 @@ Dismantling the wheel  ---- fabric
 
 [Fabric_0.0.1](./doc/Fabric_0.0.1.md)
 
+[Fabric 0.0.3](./doc/Fabric_0.0.3.md)
+
 # 职业生涯
 
 是的，我的职业生涯碰到麻烦了。
